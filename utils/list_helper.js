@@ -1,5 +1,6 @@
 const dummy = (blogs) => {
-  return 1
+  blogs = 1
+  return blogs
 }
 
 const totalLikes = (blogs) => {
@@ -11,9 +12,9 @@ const favoriteBlog = (blogs) => {
   const likes = blogs.map(blog => blog.likes)
   const mostLikes = Math.max(...likes)
   const favoriteIndex = blogs.find(blog => blog.likes === mostLikes)
-  //delete favoriteIndex._id
-  //delete favoriteIndex.url
-  //delete favoriteIndex.__v
+  delete favoriteIndex._id
+  delete favoriteIndex.url
+  delete favoriteIndex.__v
   return favoriteIndex
 }
 
