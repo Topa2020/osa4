@@ -24,8 +24,78 @@ test('right amount of blogs', async () => {
   expect(response.body).toHaveLength(helper.initialBlogs.length)
 })
 
+test('id exists', async () => {
+  const response = await api.get('/api/blogs')
+  expect(response.body[0].id).toBeDefined()
+})
 
+test('adding blog succeeds', async () => {
+  const newBlog = {
+    title: 'testi 1',
+    author: 'testaaja',
+    url:'localhost',
+    likes: 3
+  }
 
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+  
+  const response = await api.get('/api/blogs')
+
+  const contents = response.body.map(r => r.title)
+
+  expect(response.body).toHaveLength(helper.initialBlogs.length + 1)
+  expect(contents).toContain('testi 1')
+})
+
+test('no value for likes', async() => {
+  const newBlog = {
+    title: 'testi 2',
+    author: 'testaaja',
+    url:'localhost'
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+  
+  const response = await api.get('/api/blogs')
+
+  const contents = response.body.map(r => r.likes)
+  expect(contents[helper.initialBlogs.length]).toBe(0)
+})
+
+describe('missing fields', () => {
+  test('no url', async() => {
+    const newBlog = {
+      title: 'testi 2',
+      author: 'testaaja',
+      likes: 2
+    }
+  
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(400)
+  })
+  test('no title', async() => {
+    const newBlog = {
+      url: 'localhost',
+      author: 'testaaja',
+      likes: 2
+    }
+    
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(400)    
+  })
+})
 
 
 
