@@ -97,6 +97,44 @@ describe('missing fields', () => {
   })
 })
 
+describe('deletion test', () => {
+  test('succeeds with status code 204 if id is valid', async () => {
+    
+    const blogsAtStart = await helper.initialBlogs
+    const blogToDelete = blogsAtStart[0]
+
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .expect(204)
+    
+    const response = await api.get('/api/blogs')
+    const blogsAtEnd = response.body
+
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length - 1)
+
+    const title = blogsAtEnd.map(r => r.title)
+
+    expect(title).not.toContain(blogToDelete.title)
+})  
+})
+
+describe('modify blogs test', () => {
+  test('200 OK', async() => {
+    const blogToModify = helper.initialBlogs[0]
+    const modifyLikes = {
+      likes: 2222
+    }
+  
+    await api
+      .put(`/api/blogs/${blogToModify.id}`)
+      .send(modifyLikes)
+      .expect(200)
+
+
+  })
+
+  
+})
 
 
 afterAll(async () => {
